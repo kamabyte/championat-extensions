@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Championat Tweaks",
+  "description": "Adds a toggle that shows football, hockey, basketball and volleyball standings at an equal number of games, and sorting by any column.",
+  "version": "0.1.0",
+  "content_scripts": [
+    {
+      "matches": ["https://*.championat.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

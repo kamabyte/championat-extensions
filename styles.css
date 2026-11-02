@@ -1,0 +1,169 @@
+:root {
+  --cx-accent: #16a34a;
+  --cx-track-off: #c7ccd4;
+  --cx-knob: #ffffff;
+  --cx-text: #222222;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cx-track-off: #4b5563;
+    --cx-text: #e5e7eb;
+  }
+}
+
+/* The switch */
+.cx-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 6px 0 10px;
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--cx-text);
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cx-toggle__text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cx-toggle__track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--cx-track-off);
+  transition: background-color 0.18s ease;
+}
+
+.cx-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cx-knob);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s ease;
+}
+
+.cx-toggle.cx-on .cx-toggle__track {
+  background: var(--cx-accent);
+}
+
+.cx-toggle.cx-on .cx-toggle__knob {
+  transform: translateX(16px);
+}
+
+.cx-toggle:focus-visible {
+  outline: 2px solid var(--cx-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* The projected column and the levelled games value. nowrap !important so the
+   projected value never wraps — that is what would change the row height. */
+.cx-added {
+  white-space: nowrap !important;
+}
+
+.cx-added,
+.cx-levelled {
+  font-weight: 700;
+}
+
+/* Sortable column headers */
+.cx-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.cx-sortable:hover,
+.cx-sort-asc,
+.cx-sort-desc {
+  color: var(--cx-accent);
+}
+
+.cx-sortable:focus-visible {
+  outline: 2px solid var(--cx-accent);
+  outline-offset: -2px;
+}
+
+/* Absolute with no offsets: it stays right after the label but out of flow, so the
+   column width doesn't change as the sort moves between columns. In flow, it would
+   also turn the whitespace after the header's label into a rendered space. */
+.cx-sort-asc::after,
+.cx-sort-desc::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 5px;
+  margin: 0.45em 0 0 3px;
+  background: currentColor;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.cx-sort-desc::after {
+  transform: scaleY(-1);
+}
+
+/* Marks a goals column sorted by difference. Out of flow like the triangle, and
+   shifted to end just before the label. */
+.cx-sort-difference::before {
+  content: "±";
+  position: absolute;
+  transform: translateX(calc(-100% - 2px));
+  font-weight: 700;
+}
+
+td:has(> .cx-move) {
+  position: relative;
+}
+
+/* Movement vs the official position, in the free space left of the № value.
+   Absolute so that switching the projection on doesn't change the column width. */
+.cx-move {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  font-size: 0.72em;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* The arrow is drawn, not typed: an arrow character comes from a fallback font
+   with its own height and baseline. An empty inline-block sits on the baseline,
+   and 1cap makes it as tall as the digits next to it. */
+.cx-move::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.72em;
+  height: 1cap;
+  margin-right: 0.12em;
+  background: currentColor;
+  clip-path: polygon(50% 0, 100% 42%, 66% 42%, 66% 100%, 34% 100%, 34% 42%, 0 42%);
+}
+
+.cx-down::before {
+  transform: scaleY(-1);
+}
+
+.cx-up {
+  color: #16a34a;
+}
+
+.cx-down {
+  color: #dc2626;
+}
