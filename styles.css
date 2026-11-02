@@ -125,6 +125,55 @@
   font-weight: 700;
 }
 
+/* Reset button. The caption keeps its height while the button is hidden, so the
+   table doesn't jump when sorting starts or ends. */
+.cx-reset-caption {
+  position: relative;
+  caption-side: top;
+  height: 34px;
+  padding: 0;
+}
+
+/* Next to the switch there is already room: the caption takes no height and the
+   button rises into the switch's row. */
+.cx-toggle + table > .cx-reset-caption {
+  height: 0;
+}
+
+.cx-reset {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  padding: 3px 10px;
+  border: 1px solid var(--cx-track-off);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--cx-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.cx-toggle + table > .cx-reset-caption > .cx-reset {
+  bottom: 12px;
+}
+
+.cx-reset[hidden] {
+  display: none;
+}
+
+.cx-reset:hover {
+  border-color: var(--cx-accent);
+  color: var(--cx-accent);
+}
+
+.cx-reset:focus-visible {
+  outline: 2px solid var(--cx-accent);
+  outline-offset: 2px;
+}
+
 td:has(> .cx-move) {
   position: relative;
 }

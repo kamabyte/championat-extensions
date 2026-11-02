@@ -180,10 +180,13 @@
   // rows, so № stays with its team and keeps showing that team's place in the table.
   const SORTABLE_TABLES = "table.results-table";
   const DIFFERENCE_TITLE = "Сортировка по разнице";
+  const RESET_LABEL = "Сбросить";
+  const RESET_TITLE = "Сбросить сортировку";
 
-  // table -> { header, ascending, byDifference, baseRows }. header is null while
-  // unsorted. baseRows is the unsorted order: the order to return to, and the one
-  // that ties keep, so teams level on a column stay in table order in both directions.
+  // table -> { header, ascending, byDifference, baseRows, resetButton }. header is
+  // null while unsorted. baseRows is the unsorted order: the order to return to, and
+  // the one that ties keep, so teams level on a column stay in table order in both
+  // directions.
   const sorts = new WeakMap();
 
   const GOALS_PATTERN = /^(\d+)\s*[-:]\s*(\d+)$/;
@@ -276,6 +279,7 @@
 
   const renderSort = (table, sort) => {
     table.tBodies[0].append(...(sort.header ? sortedRows(sort) : sort.baseRows));
+    sort.resetButton.hidden = !sort.header;
 
     for (const cell of headerRowOf(table).cells) {
       const active = cell === sort.header;
@@ -318,6 +322,35 @@
     renderSort(table, sort);
   };
 
+  // Clears the sort only: if the projection is on, the table returns to projected
+  // order and the toggle stays on.
+  const resetSort = (table) => {
+    const sort = sorts.get(table);
+    const { header } = sort;
+    sort.header = null;
+    sort.byDifference = false;
+    renderSort(table, sort);
+    // The button that had focus is now hidden, so keep keyboard users in the table.
+    header.focus({ preventScroll: true });
+  };
+
+  // A caption is always exactly as wide as its table, which puts the button at the
+  // table's right edge with no wrapper and no measuring.
+  const createResetButton = (table) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "cx-reset";
+    button.textContent = RESET_LABEL;
+    button.title = RESET_TITLE;
+    button.hidden = true;
+    button.addEventListener("click", () => resetSort(table));
+
+    const caption = table.createCaption();
+    caption.classList.add("cx-reset-caption");
+    caption.append(button);
+    return button;
+  };
+
   // The projection reads ties and places from the row order, so it has to run on
   // the unsorted table. Its result becomes the new base and the sort goes back on.
   const withBaseOrder = (table, change) => {
@@ -346,7 +379,13 @@
       columnCount(row) !== columnCount(headerRow) || row.cells.length !== rows[0].cells.length;
     if (rows.some(irregular)) return;
 
-    sorts.set(table, { header: null, ascending: false, byDifference: false, baseRows: rows });
+    sorts.set(table, {
+      header: null,
+      ascending: false,
+      byDifference: false,
+      baseRows: rows,
+      resetButton: createResetButton(table),
+    });
 
     // The difference is what one of the sorts orders by, so make it readable.
     for (const row of rows) {
